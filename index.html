@@ -1,0 +1,1293 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RCS Tracker — Group 10 · Prompt Artifacts in LM Psychometrics</title>
+<meta name="description" content="Experiment progress tracker for RCS Group 10 — prompt artifacts in LM psychometrics on Twin-2K-500.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+  // Apply saved theme before paint to avoid a flash.
+  (function () {
+    try {
+      var t = localStorage.getItem('rcs-theme');
+      if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  })();
+</script>
+<style>
+:root {
+  --bg:#F7F8FA; --surface:#FFFFFF; --surface-2:#F1F3F6; --border:#E5E7EB;
+  --text:#111827; --muted:#6B7280; --primary:#2563EB;
+  --neutral:#64748B; --O1A:#0D9488; --O1B:#7C3AED; --O1C:#D97706; --All:#2563EB;
+  --neutral-t:#475569; --O1A-t:#0F766E; --O1B-t:#6D28D9; --O1C-t:#B45309; --All-t:#1D4ED8;
+  --done:#16A34A; --running:#2563EB; --failed:#DC2626; --stale:#EA580C; --pending:#9CA3AF;
+  --done-t:#15803D; --running-t:#1D4ED8; --failed-t:#B91C1C; --stale-t:#C2410C; --pending-t:#4B5563;
+  --shadow:0 4px 12px rgba(17,24,39,.06);
+  --overlay:rgba(17,24,39,.38);
+  --banner-bg:#FEF3C7; --banner-tx:#92400E; --banner-bd:#FCD34D;
+  --shimmer:rgba(255,255,255,.65);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:#0F1117; --surface:#171A21; --surface-2:#1E222B; --border:#2A2F3A;
+    --text:#E5E7EB; --muted:#9CA3AF; --primary:#3B82F6; --All:#3B82F6;
+    --neutral-t:#94A3B8; --O1A-t:#2DD4BF; --O1B-t:#A78BFA; --O1C-t:#FBBF24; --All-t:#60A5FA;
+    --done-t:#4ADE80; --running-t:#60A5FA; --failed-t:#F87171; --stale-t:#FB923C; --pending-t:#9CA3AF;
+    --shadow:0 4px 12px rgba(0,0,0,.35); --overlay:rgba(0,0,0,.6);
+    --banner-bg:#2D2208; --banner-tx:#FCD34D; --banner-bd:#5C4510;
+    --shimmer:rgba(255,255,255,.05);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:#0F1117; --surface:#171A21; --surface-2:#1E222B; --border:#2A2F3A;
+  --text:#E5E7EB; --muted:#9CA3AF; --primary:#3B82F6; --All:#3B82F6;
+  --neutral-t:#94A3B8; --O1A-t:#2DD4BF; --O1B-t:#A78BFA; --O1C-t:#FBBF24; --All-t:#60A5FA;
+  --done-t:#4ADE80; --running-t:#60A5FA; --failed-t:#F87171; --stale-t:#FB923C; --pending-t:#9CA3AF;
+  --shadow:0 4px 12px rgba(0,0,0,.35); --overlay:rgba(0,0,0,.6);
+  --banner-bg:#2D2208; --banner-tx:#FCD34D; --banner-bd:#5C4510;
+  --shimmer:rgba(255,255,255,.05);
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font: 400 14px/1.5 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+button { font: inherit; color: inherit; }
+.mono { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; }
+.num { font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 6px; }
+.wrap { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+
+/* ---------- Top bar ---------- */
+.topbar {
+  position: sticky; top: 0; z-index: 40; height: 64px;
+  background: var(--surface); border-bottom: 1px solid var(--border);
+}
+.topbar .wrap { height: 100%; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 16px; }
+.brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.logo {
+  width: 32px; height: 32px; border-radius: 8px; background: var(--primary); color: #fff;
+  display: grid; place-items: center; font-size: 10.5px; font-weight: 600; letter-spacing: .04em; flex: none;
+}
+.brand h1 { font-size: 20px; font-weight: 600; margin: 0; white-space: nowrap; line-height: 1.2; }
+.brand .sub { color: var(--muted); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.brand-text { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+
+select, input[type="search"] {
+  font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; height: 34px; padding: 0 10px;
+}
+.top-actions { display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
+.synced { color: var(--muted); font-size: 13px; margin-right: 6px; white-space: nowrap; }
+.icon-btn {
+  width: 34px; height: 34px; display: inline-grid; place-items: center; border-radius: 8px;
+  border: 1px solid transparent; background: transparent; color: var(--muted); cursor: pointer;
+  transition: background .15s ease-out, color .15s ease-out;
+}
+.icon-btn:hover { background: var(--surface-2); color: var(--text); text-decoration: none; }
+.icon-btn svg { width: 18px; height: 18px; }
+.icon-btn.spinning svg { animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.theme-btn .moon { display: none; }
+:root[data-theme="dark"] .theme-btn .sun { display: none; }
+:root[data-theme="dark"] .theme-btn .moon { display: block; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-btn .sun { display: none; }
+  :root:not([data-theme="light"]) .theme-btn .moon { display: block; }
+}
+
+/* ---------- Section nav ---------- */
+.secnav { position: sticky; top: 64px; z-index: 39; height: 44px; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--border); }
+.secnav .wrap { height: 100%; display: flex; align-items: center; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+.secnav .wrap::-webkit-scrollbar { display: none; }
+.secnav a {
+  color: var(--muted); font-weight: 500; font-size: 13px; padding: 6px 12px; border-radius: 999px; white-space: nowrap;
+  transition: background .15s ease-out, color .15s ease-out;
+}
+.secnav a:hover { color: var(--text); text-decoration: none; background: var(--surface-2); }
+.secnav a.active { color: var(--primary); background: color-mix(in srgb, var(--primary) 10%, transparent); }
+
+/* ---------- Banner ---------- */
+.banner {
+  margin-top: 16px; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 500;
+  background: var(--banner-bg); color: var(--banner-tx); border: 1px solid var(--banner-bd);
+  display: flex; align-items: center; gap: 8px;
+}
+
+/* ---------- Sections ---------- */
+main { padding-bottom: 32px; }
+section { scroll-margin-top: 124px; padding-top: 32px; }
+.sec-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+.sec-head h2 { font-size: 16px; font-weight: 600; margin: 0; }
+.sec-head .hint { color: var(--muted); font-size: 13px; }
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  transition: box-shadow .2s ease-out, border-color .2s ease-out;
+}
+
+/* KPI */
+.kpis { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+.kpi { padding: 16px; min-height: 116px; display: flex; flex-direction: column; gap: 8px; }
+.kpi-label { color: var(--muted); font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
+.kpi-num { font-size: 28px; font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+.kpi-num small { font-size: 16px; color: var(--muted); font-weight: 500; }
+.kpi-foot { color: var(--muted); font-size: 12.5px; margin-top: auto; }
+.kpi.alert .kpi-num { color: var(--failed-t); }
+.kpi.alert { border-color: color-mix(in srgb, var(--failed) 35%, var(--border)); }
+
+.bar { height: 6px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+.bar > i { display: block; height: 100%; width: 0; background: var(--bc, var(--primary)); border-radius: inherit; transition: width .4s ease-out; }
+.bar.thin { height: 4px; }
+
+/* Objective cards */
+.objs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 16px; }
+.obj { padding: 20px; display: flex; gap: 20px; align-items: center; position: relative; overflow: hidden; }
+.obj::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--oc); }
+.ring {
+  --p: 0; width: 96px; height: 96px; border-radius: 50%; flex: none; position: relative;
+  background: conic-gradient(var(--oc) calc(var(--p) * 1%), var(--surface-2) 0);
+  display: grid; place-items: center;
+}
+.ring::after { content: ""; position: absolute; inset: 9px; background: var(--surface); border-radius: 50%; }
+.ring span { position: relative; z-index: 1; text-align: center; line-height: 1.1; }
+.ring b { display: block; font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.ring em { font-style: normal; font-size: 11px; color: var(--muted); }
+.obj-body { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.obj-title { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 15px; }
+.obj-desc { color: var(--muted); font-size: 13px; }
+.obj-meta { font-size: 13px; }
+.obj-eta { color: var(--muted); font-size: 12.5px; }
+
+/* chips */
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; height: 22px; padding: 0 9px; border-radius: 999px;
+  font-size: 12px; font-weight: 500; white-space: nowrap;
+  background: color-mix(in srgb, var(--oc) 12%, transparent); color: var(--oc-t);
+}
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--dc, var(--pending)); flex: none; display: inline-block; }
+.dot.pulse { animation: pulse 1.8s ease-out infinite; }
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--running) 55%, transparent); }
+  70% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--running) 0%, transparent); }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+.s-done { --dc: var(--done); --oc: var(--done); --oc-t: var(--done-t); }
+.s-running { --dc: var(--running); --oc: var(--running); --oc-t: var(--running-t); }
+.s-failed { --dc: var(--failed); --oc: var(--failed); --oc-t: var(--failed-t); }
+.s-stale { --dc: var(--stale); --oc: var(--stale); --oc-t: var(--stale-t); }
+.s-pending { --dc: var(--pending); --oc: var(--pending); --oc-t: var(--pending-t); }
+.o-none { --oc: var(--neutral); --oc-t: var(--neutral-t); }
+.o-O1A { --oc: var(--O1A); --oc-t: var(--O1A-t); }
+.o-O1B { --oc: var(--O1B); --oc-t: var(--O1B-t); }
+.o-O1C { --oc: var(--O1C); --oc-t: var(--O1C-t); }
+.o-All { --oc: var(--All); --oc-t: var(--All-t); }
+
+/* avatars */
+.av {
+  --s: 32px; width: var(--s); height: var(--s); border-radius: 50%; flex: none; position: relative; overflow: hidden;
+  display: inline-grid; place-items: center; font-weight: 600; font-size: calc(var(--s) * .36);
+  background: color-mix(in srgb, var(--oc, var(--neutral)) 16%, var(--surface)); color: var(--oc-t, var(--neutral-t));
+  border: 1px solid color-mix(in srgb, var(--oc, var(--neutral)) 25%, transparent);
+}
+.av img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.stack { display: inline-flex; align-items: center; }
+.stack .av { box-shadow: 0 0 0 2px var(--surface); }
+.stack .av + .av { margin-left: -8px; }
+
+/* Team */
+.toolbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.toolbar input[type="search"] { width: 220px; }
+.group-head {
+  display: flex; align-items: center; gap: 10px; margin: 24px 0 12px; font-weight: 600; font-size: 14px;
+  padding-left: 10px; border-left: 3px solid var(--oc);
+}
+.group-head:first-child { margin-top: 0; }
+.group-head .muted { font-weight: 400; font-size: 13px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.mcard { padding: 16px; display: flex; flex-direction: column; gap: 12px; cursor: pointer; min-width: 0; }
+.mcard:hover, .obj:hover, .kpi:hover { box-shadow: var(--shadow); }
+.mcard:focus-visible { border-radius: 12px; }
+.m-head { display: flex; gap: 12px; align-items: center; min-width: 0; }
+.m-name { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.m-gh { color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.m-id { min-width: 0; flex: 1; }
+.badges { display: flex; gap: 6px; flex-wrap: wrap; }
+.badge {
+  display: inline-flex; align-items: center; gap: 4px; height: 22px; padding: 0 8px; border-radius: 999px;
+  font-size: 12px; font-weight: 500; border: 1px solid var(--border); color: var(--muted); background: var(--surface);
+}
+.badge.ok { color: var(--done-t); border-color: color-mix(in srgb, var(--done) 30%, var(--border)); background: color-mix(in srgb, var(--done) 8%, var(--surface)); }
+.badge.warn { color: var(--stale-t); border-color: color-mix(in srgb, var(--stale) 30%, var(--border)); background: color-mix(in srgb, var(--stale) 8%, var(--surface)); }
+.badge.bad { color: var(--failed-t); border-color: color-mix(in srgb, var(--failed) 30%, var(--border)); background: color-mix(in srgb, var(--failed) 8%, var(--surface)); }
+.m-prog { display: flex; flex-direction: column; gap: 6px; }
+.m-prog .row { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--muted); }
+.counts { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); }
+.counts span { display: inline-flex; align-items: center; gap: 5px; }
+.counts b { color: var(--text); font-weight: 500; font-variant-numeric: tabular-nums; }
+.m-foot { display: flex; justify-content: space-between; gap: 8px; font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--border); padding-top: 10px; }
+.m-foot .mono { color: var(--text); }
+
+/* Team list */
+.mlist { overflow: hidden; }
+.mrow {
+  display: grid; grid-template-columns: 28px minmax(200px, 1.6fr) 64px auto minmax(150px, 1fr) auto 96px;
+  gap: 16px; align-items: center; padding: 12px 16px; cursor: pointer; transition: background .15s ease-out;
+}
+.mrow + .mrow { border-top: 1px solid var(--border); }
+.mrow:not(.mhead):hover { background: var(--surface-2); }
+.mrow:focus-visible { outline-offset: -2px; border-radius: 0; }
+.mhead { cursor: default; padding-top: 10px; padding-bottom: 10px; color: var(--muted); font-size: 12.5px; font-weight: 500; }
+.mrow .rank { color: var(--muted); font-weight: 600; text-align: center; }
+.mrow .m-id { display: flex; flex-direction: column; min-width: 0; }
+.mrow .m-gh { font-size: 12px; }
+.mrow .c-last { color: var(--muted); font-size: 12.5px; white-space: nowrap; }
+.mrow .m-prog .row { display: flex; }
+
+/* Batch board */
+.filters { display: flex; gap: 6px; flex-wrap: wrap; }
+.fchip {
+  display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--surface); cursor: pointer; font-size: 13px; font-weight: 500; color: var(--muted);
+  transition: background .15s ease-out, color .15s ease-out, border-color .15s ease-out;
+}
+.fchip:hover { color: var(--text); }
+.fchip[aria-pressed="true"] { color: var(--text); border-color: var(--text); }
+.fchip .n { font-variant-numeric: tabular-nums; color: var(--muted); font-weight: 400; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 12px; height: 12px; border-radius: 4px; background: var(--dc); display: inline-block; }
+.board { padding: 8px 0; overflow-x: auto; }
+.brow { display: flex; align-items: center; min-width: max-content; }
+.brow + .brow { border-top: 1px solid var(--border); }
+.bname {
+  position: sticky; left: 0; z-index: 2; background: var(--surface); width: 240px; flex: none;
+  display: flex; align-items: center; gap: 10px; padding: 8px 16px; min-width: 0;
+}
+.bname .m-name { font-weight: 500; font-size: 13.5px; }
+.bname .muted { font-size: 12px; }
+.cells { display: flex; gap: 6px; padding: 8px 16px 8px 8px; }
+.cell {
+  width: 28px; height: 28px; border-radius: 7px; border: 0; padding: 0; cursor: pointer; background: var(--dc);
+  transition: transform .15s ease-out, opacity .15s ease-out;
+}
+.cell:hover { transform: scale(1.12); }
+.cell.s-pending { background: color-mix(in srgb, var(--pending) 35%, var(--surface-2)); }
+.cell.s-running { animation: cellpulse 2s ease-in-out infinite; }
+.cell.dim { opacity: .14; }
+@keyframes cellpulse { 50% { opacity: .55; } }
+.tip {
+  position: fixed; z-index: 80; pointer-events: none; background: var(--text); color: var(--bg);
+  padding: 8px 10px; border-radius: 8px; font-size: 12px; line-height: 1.45; max-width: 260px;
+  box-shadow: var(--shadow);
+}
+.tip .mono { font-size: 12px; font-weight: 500; }
+
+/* Activity */
+.timeline { padding: 8px 20px; }
+.ev { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; position: relative; }
+.ev + .ev { border-top: 1px solid var(--border); }
+.ev .dotcol { padding-top: 12px; }
+.ev-text { flex: 1; min-width: 0; font-size: 13.5px; }
+.ev-text b { font-weight: 600; }
+.ev-sub { color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+.more-row { padding: 12px 20px; border-top: 1px solid var(--border); text-align: center; }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 10px; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--surface); cursor: pointer; font-size: 12.5px; font-weight: 500;
+  color: var(--text); white-space: nowrap; transition: background .15s ease-out, border-color .15s ease-out;
+}
+.btn:hover { background: var(--surface-2); text-decoration: none; }
+.btn[aria-disabled="true"] { color: var(--muted); cursor: not-allowed; opacity: .7; }
+.btn svg { width: 14px; height: 14px; }
+
+/* Tables */
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { text-align: left; font-weight: 500; color: var(--muted); font-size: 12.5px; padding: 10px 12px; border-bottom: 1px solid var(--border); white-space: nowrap; background: var(--surface); }
+td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.err { max-width: 260px; overflow: hidden; text-overflow: ellipsis; color: var(--muted); }
+.actions { display: flex; gap: 6px; }
+tr.hl td { background: color-mix(in srgb, var(--primary) 8%, transparent); }
+.empty { padding: 40px 20px; text-align: center; color: var(--muted); }
+.empty .ok-icon { width: 40px; height: 40px; border-radius: 50%; margin: 0 auto 10px; display: grid; place-items: center; background: color-mix(in srgb, var(--done) 14%, transparent); color: var(--done-t); }
+.empty strong { display: block; color: var(--text); font-weight: 500; }
+
+/* Setup */
+.setup { padding: 20px; }
+.setup-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 13px; }
+.tasks { list-style: none; margin: 16px 0 0; padding: 0; }
+.tasks li { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--border); }
+.check { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; flex: none; border: 1.5px solid var(--border); }
+.check.on { background: var(--done); border-color: var(--done); color: #fff; }
+.check svg { width: 12px; height: 12px; }
+.tasks .t { flex: 1; min-width: 0; }
+.tasks .on + .t { color: var(--muted); text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--muted) 50%, transparent); }
+.owner { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 12.5px; white-space: nowrap; }
+
+/* Footer */
+footer { border-top: 1px solid var(--border); margin-top: 32px; padding: 24px 0 32px; color: var(--muted); font-size: 12.5px; }
+footer a { color: var(--muted); text-decoration: underline; text-underline-offset: 2px; }
+footer a:hover { color: var(--text); }
+
+/* Drawer */
+.overlay { position: fixed; inset: 0; background: var(--overlay); z-index: 60; opacity: 0; visibility: hidden; transition: opacity .2s ease-out, visibility .2s; }
+.overlay.open { opacity: 1; visibility: visible; }
+.drawer {
+  position: fixed; top: 0; right: 0; bottom: 0; width: 480px; max-width: 100%; z-index: 70;
+  background: var(--surface); border-left: 1px solid var(--border); overflow-y: auto;
+  transform: translateX(100%); visibility: hidden; transition: transform .2s ease-out, visibility .2s;
+}
+.drawer.open { transform: none; visibility: visible; }
+.drawer:focus { outline: none; }
+.d-head { position: sticky; top: 0; background: var(--surface); z-index: 2; padding: 20px 24px 16px; border-bottom: 1px solid var(--border); display: flex; gap: 14px; align-items: center; }
+.d-head h3 { margin: 0; font-size: 16px; font-weight: 600; }
+.d-head .m-id { display: flex; flex-direction: column; gap: 4px; }
+.d-sec { padding: 16px 24px; }
+.d-sec + .d-sec { border-top: 1px solid var(--border); }
+.d-sec h4 { margin: 0 0 12px; font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.d-list { display: grid; grid-template-columns: auto 1fr; gap: 8px 16px; font-size: 13px; margin: 0; }
+.d-list dt { color: var(--muted); }
+.d-list dd { margin: 0; }
+.d-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.d-stat { background: var(--surface-2); border-radius: 8px; padding: 10px 12px; }
+.d-stat b { display: block; font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.d-stat span { color: var(--muted); font-size: 12px; }
+.drawer table { font-size: 12.5px; }
+.drawer th, .drawer td { padding: 8px 8px; }
+.drawer .links a { margin-right: 8px; white-space: nowrap; }
+.drawer .links .off { color: var(--muted); margin-right: 8px; }
+.d-err { margin-top: 6px; color: var(--failed-t); font-size: 12px; white-space: normal; }
+
+/* Toast */
+.toast {
+  position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); z-index: 90;
+  background: var(--text); color: var(--bg); padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 500;
+  opacity: 0; pointer-events: none; transition: opacity .18s ease-out, transform .18s ease-out;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* Skeleton */
+.skel { position: relative; overflow: hidden; background: var(--surface-2); border-radius: 8px; }
+.skel::after {
+  content: ""; position: absolute; inset: 0; transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, var(--shimmer), transparent);
+  animation: shimmer 1.2s ease-in-out infinite;
+}
+@keyframes shimmer { to { transform: translateX(100%); } }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1199px) {
+  .kpis { grid-template-columns: repeat(6, 1fr); }
+  .kpi { grid-column: span 2; }
+  .kpi:nth-child(4), .kpi:nth-child(5) { grid-column: span 3; }
+  .objs { grid-template-columns: 1fr; }
+  .grid3 { grid-template-columns: repeat(2, 1fr); }
+  .mrow { grid-template-columns: 28px minmax(180px, 1.5fr) 64px minmax(140px, 1fr) 96px; }
+  .mrow .c-badges, .mrow .c-counts { display: none; }
+  .drawer { width: 420px; }
+  .brand .sub { display: none; }
+  .synced { display: none; }
+}
+@media (max-width: 767px) {
+  .wrap { padding: 0 16px; }
+  .topbar .wrap { gap: 8px; }
+  .brand h1 { font-size: 17px; }
+  .top-actions { gap: 0; }
+  .top-actions .icon-btn { width: 32px; }
+  .top-actions .hide-sm { display: none; }
+  .kpis { grid-template-columns: 1fr; }
+  .kpi, .kpi:nth-child(4), .kpi:nth-child(5) { grid-column: auto; }
+  .grid3 { grid-template-columns: 1fr; }
+  .mrow { grid-template-columns: 24px 1fr auto; gap: 8px 12px; }
+  .mrow .m-prog { grid-column: 2 / -1; }
+  .mrow .c-last, .mhead { display: none; }
+  .obj { flex-direction: column; align-items: flex-start; }
+  .toolbar, .toolbar input[type="search"] { width: 100%; }
+  .toolbar input[type="search"] { flex: 1; width: auto; }
+  .bname { width: 168px; padding: 8px 12px; }
+  .drawer { width: 100%; border-left: 0; }
+  .d-head, .d-sec { padding-left: 16px; padding-right: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">RCS</div>
+      <div class="brand-text">
+        <h1>RCS Tracker</h1>
+        <span class="sub" id="subtitle"></span>
+      </div>
+    </div>
+
+
+    <div class="top-actions">
+      <time class="synced" id="synced">Syncing…</time>
+      <button class="icon-btn" id="refreshBtn" aria-label="Refresh data" title="Refresh data">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 4v5h-5"/></svg>
+      </button>
+      <a class="icon-btn hide-sm" id="driveBtn" target="_blank" rel="noopener" aria-label="Experiment results (Google Drive)" title="Experiment results">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      </a>
+      <a class="icon-btn hide-sm" id="repoBtn" target="_blank" rel="noopener" aria-label="GitHub repository" title="GitHub repository">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      </a>
+      <button class="icon-btn theme-btn" id="themeBtn" aria-label="Toggle dark mode" title="Toggle theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<nav class="secnav" aria-label="Sections">
+  <div class="wrap" id="secnav">
+    <a href="#overview" data-sec="overview">Overview</a>
+    <a href="#team" data-sec="team">Team</a>
+    <a href="#batches" data-sec="batches">Batches</a>
+    <a href="#activity" data-sec="activity">Activity</a>
+    <a href="#failures" data-sec="failures">Failures</a>
+    <a href="#setup" data-sec="setup">Setup</a>
+  </div>
+</nav>
+
+<main class="wrap">
+  <div id="bannerSlot"></div>
+
+  <section id="overview" aria-labelledby="h-overview">
+    <div class="sec-head"><h2 id="h-overview">Overview</h2><span class="hint" id="overviewHint"></span></div>
+    <div class="kpis" id="kpis">
+      <div class="card kpi"><div class="skel" style="height:14px;width:60%"></div><div class="skel" style="height:28px;width:50%"></div><div class="skel" style="height:6px;margin-top:auto"></div></div>
+      <div class="card kpi"><div class="skel" style="height:14px;width:60%"></div><div class="skel" style="height:28px;width:50%"></div><div class="skel" style="height:6px;margin-top:auto"></div></div>
+      <div class="card kpi"><div class="skel" style="height:14px;width:60%"></div><div class="skel" style="height:28px;width:30%"></div></div>
+      <div class="card kpi"><div class="skel" style="height:14px;width:60%"></div><div class="skel" style="height:28px;width:30%"></div></div>
+      <div class="card kpi"><div class="skel" style="height:14px;width:60%"></div><div class="skel" style="height:28px;width:50%"></div></div>
+    </div>
+    <div class="objs" id="objs">
+      <div class="card obj"><div class="skel" style="width:96px;height:96px;border-radius:50%"></div><div style="flex:1;display:grid;gap:8px"><div class="skel" style="height:16px;width:60%"></div><div class="skel" style="height:12px"></div><div class="skel" style="height:12px;width:70%"></div></div></div>
+      <div class="card obj"><div class="skel" style="width:96px;height:96px;border-radius:50%"></div><div style="flex:1;display:grid;gap:8px"><div class="skel" style="height:16px;width:60%"></div><div class="skel" style="height:12px"></div><div class="skel" style="height:12px;width:70%"></div></div></div>
+      <div class="card obj"><div class="skel" style="width:96px;height:96px;border-radius:50%"></div><div style="flex:1;display:grid;gap:8px"><div class="skel" style="height:16px;width:60%"></div><div class="skel" style="height:12px"></div><div class="skel" style="height:12px;width:70%"></div></div></div>
+    </div>
+  </section>
+
+  <section id="team" aria-labelledby="h-team">
+    <div class="sec-head">
+      <h2 id="h-team">Team</h2>
+      <div class="toolbar">
+        <label class="sr-only" for="search">Search member</label>
+        <input type="search" id="search" placeholder="Search member…" autocomplete="off">
+      </div>
+    </div>
+    <div id="teamBody">
+      <div class="grid3" style="grid-template-columns:1fr">
+        <div class="card mcard"><div class="skel" style="height:40px"></div><div class="skel" style="height:12px"></div><div class="skel" style="height:6px"></div></div>
+        <div class="card mcard"><div class="skel" style="height:40px"></div><div class="skel" style="height:12px"></div><div class="skel" style="height:6px"></div></div>
+        <div class="card mcard"><div class="skel" style="height:40px"></div><div class="skel" style="height:12px"></div><div class="skel" style="height:6px"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="batches" aria-labelledby="h-batches">
+    <div class="sec-head">
+      <h2 id="h-batches">Batch board</h2>
+      <div class="legend" aria-hidden="true">
+        <span class="s-done"><i></i>Done</span><span class="s-running"><i></i>Running</span><span class="s-failed"><i></i>Failed</span><span class="s-stale"><i></i>Stale</span><span class="s-pending"><i style="background:color-mix(in srgb,var(--pending) 35%,var(--surface-2))"></i>Pending</span>
+      </div>
+    </div>
+    <div class="filters" id="statusFilters" role="group" aria-label="Filter batches by status" style="margin-bottom:12px"></div>
+    <div class="card board" id="board"><div style="padding:16px;display:grid;gap:10px"><div class="skel" style="height:28px"></div><div class="skel" style="height:28px"></div><div class="skel" style="height:28px"></div></div></div>
+  </section>
+
+  <section id="activity" aria-labelledby="h-activity">
+    <div class="sec-head"><h2 id="h-activity">Activity</h2><span class="hint">Latest updates from batch runs</span></div>
+    <div class="card" id="activityBody"><div style="padding:16px;display:grid;gap:12px"><div class="skel" style="height:32px"></div><div class="skel" style="height:32px"></div></div></div>
+  </section>
+
+  <section id="failures" aria-labelledby="h-failures">
+    <div class="sec-head"><h2 id="h-failures">Failures &amp; resume</h2><span class="hint">Failed and stalled runs, with the chunk to resume from</span></div>
+    <div class="card" id="failBody"><div style="padding:16px"><div class="skel" style="height:80px"></div></div></div>
+  </section>
+
+  <section id="setup" aria-labelledby="h-setup">
+    <div class="sec-head"><h2 id="h-setup">Setup</h2><span class="hint">Shared tasks for the whole team</span></div>
+    <div class="card setup" id="setupBody"><div class="skel" style="height:80px"></div></div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap" id="footer">Loading…</div>
+</footer>
+
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" aria-hidden="true" tabindex="-1">
+  <div id="drawerBody"></div>
+</aside>
+<div class="tip" id="tip" role="tooltip" hidden></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+'use strict';
+
+/* ================= Config ================= */
+/* All content lives in ./data/*.json — this file holds only paths and timing. */
+var CONFIG = {
+  files: {
+    config: './data/config.json',            // generated_at, repo, drive_url, dataset, objectives
+    members: './data/members.json',          // { members: [...] }
+    batches: './data/batches.json',          // { batches: [...] }
+    setup_tasks: './data/setup_tasks.json'   // { setup_tasks: [...] }
+  },
+  refreshMs: 60000,
+  relTickMs: 30000,
+  staleMinutes: 30
+};
+var OBJECTIVES = { O1A: { name: 'O1A', desc: '' }, O1B: { name: 'O1B', desc: '' }, O1C: { name: 'O1C', desc: '' } }; // replaced by config.json
+/* Accepts `objective` or `group` (any case, e.g. "o1a") and returns canonical "O1A". */
+function normObjective(m) {
+  var o = String(m.objective || m.group || '').toUpperCase();
+  return o || 'Unassigned';
+}
+var OBJ_ORDER = ['O1A', 'O1B', 'O1C'];
+var STATUSES = ['done', 'running', 'failed', 'stale', 'pending'];
+var STATUS_LABEL = { done: 'Done', running: 'Running', failed: 'Failed', stale: 'Stale', pending: 'Pending' };
+var REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+var ICON = {
+  ext: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>',
+  copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>',
+  close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>'
+};
+
+/* ================= State ================= */
+var S = {
+  data: null, mock: false, obj: 'All', search: '', sort: 'progress', status: 'all',
+  activityLimit: 20, first: true, loading: false,
+  drawer: null, // { memberId, batchId, returnFocus }
+  memberById: {}, batchById: {}
+};
+
+/* ================= Helpers ================= */
+function $(id) { return document.getElementById(id); }
+function esc(v) {
+  return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
+function ts(v) { var t = v ? new Date(v).getTime() : NaN; return isNaN(t) ? null : t; }
+function pct(a, b) { return b > 0 ? (a / b) * 100 : 0; }
+function kfmt(n) {
+  if (n >= 10000) return Math.round(n / 1000) + 'k';
+  if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+  return String(n);
+}
+function fmtExact(v) {
+  var t = ts(v); if (t == null) return '';
+  return new Date(t).toLocaleString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+function fmtDay(t) { return new Date(t).toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' }); }
+function rel(v) {
+  var t = ts(v); if (t == null) return '—';
+  var s = Math.round((Date.now() - t) / 1000);
+  if (s < 0) s = 0;
+  if (s < 45) return 'just now';
+  var m = Math.round(s / 60); if (m < 60) return m + ' min ago';
+  var h = Math.round(m / 60); if (h < 24) return h + ' h ago';
+  var d = Math.round(h / 24); if (d < 30) return d + ' d ago';
+  return fmtExact(v);
+}
+function relEl(v, prefix, cls) {
+  if (!ts(v)) return '<span class="' + (cls || '') + '">' + esc(prefix || '') + '—</span>';
+  return '<time class="' + (cls || '') + '" datetime="' + esc(v) + '" data-rel="' + esc(v) + '" data-prefix="' + esc(prefix || '') + '" title="' + esc(fmtExact(v)) + '">' + esc((prefix || '') + rel(v)) + '</time>';
+}
+function initials(name) {
+  var p = String(name || '?').trim().split(/\s+/);
+  return ((p[0] || '?')[0] + (p.length > 1 ? p[p.length - 1][0] : '')).toUpperCase();
+}
+function objClass(o) { return 'o-' + (OBJECTIVES[o] ? o : 'none'); }
+function avatar(m, size) {
+  var s = size || 32;
+  var name = m ? m.name : '?';
+  var img = m && m.avatar_url ? '<img src="' + esc(m.avatar_url) + '" alt="" loading="lazy" onerror="this.remove()">' : '';
+  return '<span class="av ' + objClass(m && m.objective) + '" style="--s:' + s + 'px" title="' + esc(name) + '" aria-hidden="true">' + esc(initials(name)) + img + '</span>';
+}
+function stack(members, max) {
+  max = max || 5;
+  var h = members.slice(0, max).map(function (m) { return avatar(m, 26); }).join('');
+  if (members.length > max) h += '<span class="av" style="--s:26px">+' + (members.length - max) + '</span>';
+  return '<span class="stack">' + h + '</span>';
+}
+function statusChip(st) {
+  return '<span class="chip s-' + st + '"><span class="dot' + (st === 'running' ? ' pulse' : '') + '"></span>' + STATUS_LABEL[st] + '</span>';
+}
+function objChip(o) { return '<span class="chip ' + objClass(o) + '">' + esc(o || '—') + '</span>'; }
+function repoUrl() { return S.data && S.data.repo ? 'https://github.com/' + S.data.repo : null; }
+function driveUrl() { return (S.data && S.data.drive_url) || null; }
+function batchDrive(b) { return b.drive_folder_url || driveUrl(); }
+function commitUrl(b) { return b.commit_sha && repoUrl() ? repoUrl() + '/commit/' + encodeURIComponent(b.commit_sha) : null; }
+function extLink(url, label, cls) {
+  if (!url) return '<span class="' + (cls ? cls + ' ' : '') + 'off" aria-disabled="true" title="Not available">' + esc(label) + ' ↗</span>';
+  return '<a class="' + (cls || '') + '" href="' + esc(url) + '" target="_blank" rel="noopener">' + esc(label) + ' ↗</a>';
+}
+function btnLink(url, label) {
+  if (!url) return '<span class="btn" aria-disabled="true" title="Not available">' + esc(label) + ' ' + ICON.ext + '</span>';
+  return '<a class="btn" href="' + esc(url) + '" target="_blank" rel="noopener">' + esc(label) + ' ' + ICON.ext + '</a>';
+}
+
+/* Effective status: running but silent for > 30 min → stale */
+function effStatus(b) {
+  var st = STATUSES.indexOf(b.status) >= 0 ? b.status : 'pending';
+  if (st === 'running') {
+    var u = ts(b.updated_at);
+    if (u != null && Date.now() - u > CONFIG.staleMinutes * 60000) st = 'stale';
+  }
+  return st;
+}
+
+/* ================= Data ================= */
+function normalize(d) {
+  d.members = Array.isArray(d.members) ? d.members : [];
+  d.batches = Array.isArray(d.batches) ? d.batches : [];
+  d.setup_tasks = Array.isArray(d.setup_tasks) ? d.setup_tasks : [];
+  S.memberById = {}; S.batchById = {};
+  d.members.forEach(function (m) {
+    m.onboarding = m.onboarding || {};
+    m.objective = normObjective(m);
+    S.memberById[m.id] = m;
+  });
+  d.batches.forEach(function (b) {
+    b.chunks_total = +b.chunks_total || 0;
+    b.last_completed_chunk = +b.last_completed_chunk || 0;
+    b.prompts_total = +b.prompts_total || 0;
+    b.prompts_done = +b.prompts_done || 0;
+    if (S.memberById[b.member_id]) b.objective = S.memberById[b.member_id].objective;
+    S.batchById[b.batch_id] = b;
+  });
+  return d;
+}
+function view() {
+  var d = S.data, o = 'All';
+  var members = d.members.filter(function (m) { return o === 'All' || m.objective === o; });
+  var batches = d.batches.filter(function (b) { return o === 'All' || b.objective === o; });
+  batches.forEach(function (b) { b._st = effStatus(b); });
+  return { members: members, batches: batches };
+}
+function countBy(batches) {
+  var c = { done: 0, running: 0, failed: 0, stale: 0, pending: 0 };
+  batches.forEach(function (b) { c[b._st || effStatus(b)]++; });
+  return c;
+}
+function memberStats(m, all) {
+  var mine = all.filter(function (b) { return b.member_id === m.id; });
+  mine.forEach(function (b) { b._st = effStatus(b); });
+  var c = countBy(mine);
+  var last = null, cur = null;
+  mine.forEach(function (b) {
+    var u = ts(b.updated_at);
+    if (u != null && (last == null || u > last.t)) last = { t: u, v: b.updated_at, b: b };
+  });
+  var active = mine.filter(function (b) { return b._st === 'running'; })[0] || mine.filter(function (b) { return b._st === 'stale'; })[0];
+  cur = active || (last && last.b) || null;
+  return {
+    batches: mine, c: c, total: mine.length, pct: pct(c.done, mine.length),
+    lastActive: last ? last.v : null, lastT: last ? last.t : 0, current: cur, currentLive: !!active
+  };
+}
+
+/* ================= Rendering ================= */
+function renderBanner() {
+  var errs = S.loadErrors || [];
+  $('bannerSlot').innerHTML = errs.length
+    ? '<div class="banner" role="status"><span aria-hidden="true">⚠</span> Could not load ' + errs.map(function (f) { return '<span class="mono" style="font-size:12px">data/' + esc(f) + '</span>'; }).join(', ') + ' — those sections may be empty.</div>'
+    : '';
+}
+
+function renderMeta() {
+  $('subtitle').textContent = S.data.subtitle || '';
+  [['driveBtn', driveUrl()], ['repoBtn', repoUrl()]].forEach(function (p) {
+    var el = $(p[0]);
+    if (p[1]) { el.href = p[1]; el.hidden = false; } else { el.removeAttribute('href'); el.hidden = true; }
+  });
+}
+function renderLoadError() {
+  renderBanner();
+  var msg = '<div class="empty"><strong>No data</strong>data/members.json could not be loaded. Serve this folder over HTTP (not file://) and check the JSON is valid.</div>';
+  ['kpis', 'objs', 'teamBody', 'board', 'activityBody', 'failBody', 'setupBody'].forEach(function (id) { $(id).innerHTML = id === 'kpis' || id === 'objs' ? '' : msg; });
+  $('synced').textContent = '';
+  $('footer').textContent = '';
+}
+function renderSynced() {
+  var el = $('synced'), g = S.data && S.data.generated_at;
+  if (!g) { el.textContent = ''; return; }
+  el.setAttribute('datetime', g);
+  el.setAttribute('data-rel', g);
+  el.setAttribute('data-prefix', 'Synced ');
+  el.title = 'Data generated ' + fmtExact(g);
+  el.textContent = 'Synced ' + rel(g);
+}
+
+function renderKPIs(v) {
+  var c = countBy(v.batches);
+  var total = v.batches.length;
+  var pDone = 0, pTot = 0;
+  v.batches.forEach(function (b) { pDone += b.prompts_done; pTot += b.prompts_total; });
+  var attention = c.failed + c.stale;
+  var accepted = v.members.filter(function (m) { return m.onboarding.github_invite === 'accepted'; });
+  var pp = pct(pDone, pTot);
+  $('kpis').innerHTML =
+    '<div class="card kpi"><div class="kpi-label">Batches done</div>' +
+      '<div class="kpi-num"><span data-to="' + c.done + '">' + c.done + '</span> <small>/ ' + total + '</small></div>' +
+      '<div class="bar thin" style="margin-top:auto"><i style="width:' + pct(c.done, total).toFixed(1) + '%"></i></div></div>' +
+    '<div class="card kpi"><div class="kpi-label">Prompts completed</div>' +
+      '<div class="kpi-num"><span data-to="' + pp.toFixed(1) + '" data-dec="1">' + pp.toFixed(1) + '</span>%</div>' +
+      '<div class="kpi-foot num">' + kfmt(pDone) + ' / ' + kfmt(pTot) + '</div></div>' +
+    '<div class="card kpi"><div class="kpi-label"><span class="dot s-running' + (c.running ? ' pulse' : '') + '"></span>Running now</div>' +
+      '<div class="kpi-num"><span data-to="' + c.running + '">' + c.running + '</span></div>' +
+      '<div class="kpi-foot">' + (c.running ? 'batches active on Kaggle' : 'nothing running') + '</div></div>' +
+    '<div class="card kpi' + (attention > 0 ? ' alert' : '') + '"><div class="kpi-label"><span class="dot ' + (attention ? 's-failed' : 's-done') + '"></span>Needs attention</div>' +
+      '<div class="kpi-num"><span data-to="' + attention + '">' + attention + '</span></div>' +
+      '<div class="kpi-foot">' + c.failed + ' failed · ' + c.stale + ' stale</div></div>' +
+    '<div class="card kpi"><div class="kpi-label">Team onboarded</div>' +
+      '<div class="kpi-num"><span data-to="' + accepted.length + '">' + accepted.length + '</span> <small>/ ' + v.members.length + ' accepted</small></div>' +
+      '<div class="kpi-foot">' + (v.members.length ? stack(v.members, 9) : 'No members in this objective') + '</div></div>';
+
+  if (S.first && !REDUCED) {
+    $('kpis').querySelectorAll('[data-to]').forEach(countUp);
+  }
+}
+function countUp(el) {
+  var to = parseFloat(el.getAttribute('data-to')) || 0;
+  var dec = +(el.getAttribute('data-dec') || 0);
+  if (!to) return;
+  var t0 = performance.now(), dur = 400;
+  function step(t) {
+    var k = Math.min(1, (t - t0) / dur);
+    var e = 1 - Math.pow(1 - k, 3);
+    el.textContent = (to * e).toFixed(dec);
+    if (k < 1) requestAnimationFrame(step);
+  }
+  el.textContent = (0).toFixed(dec);
+  requestAnimationFrame(step);
+}
+
+function etaText(batches, members) {
+  var remaining = batches.filter(function (b) { return b._st !== 'done'; }).length;
+  if (!batches.length) return 'No batches yet';
+  if (!remaining) return 'Complete';
+  var durs = batches.filter(function (b) { return b._st === 'done' && ts(b.started_at) && ts(b.updated_at); })
+    .map(function (b) { return ts(b.updated_at) - ts(b.started_at); })
+    .filter(function (x) { return x > 0; });
+  if (!durs.length) return 'Est. finish: not enough data yet';
+  var avg = durs.reduce(function (a, b) { return a + b; }, 0) / durs.length;
+  var workers = Math.max(1, members.filter(function (m) { return m.onboarding.kaggle_linked; }).length);
+  var eta = Date.now() + (remaining * avg) / workers;
+  var hrs = avg / 3600000;
+  return 'Est. finish ~' + fmtDay(eta) + ' · avg ' + hrs.toFixed(1) + ' h / batch';
+}
+
+function renderObjectives(v) {
+  var list = OBJ_ORDER.filter(function (o) { return S.data.members.some(function (m) { return m.objective === o; }); });
+  $('objs').style.gridTemplateColumns = list.length === 1 ? '1fr' : '';
+  $('objs').innerHTML = list.map(function (o) {
+    var bs = S.data.batches.filter(function (b) { return b.objective === o; });
+    bs.forEach(function (b) { b._st = effStatus(b); });
+    var ms = S.data.members.filter(function (m) { return m.objective === o; });
+    var c = countBy(bs), pd = 0, pt = 0;
+    bs.forEach(function (b) { pd += b.prompts_done; pt += b.prompts_total; });
+    var p = pct(pd, pt), pr = Math.round(p);
+    var meta = c.done + '/' + bs.length + ' batches';
+    if (c.running) meta += ' · <span style="color:var(--running-t)">' + c.running + ' running</span>';
+    if (c.failed) meta += ' · <span style="color:var(--failed-t)">' + c.failed + ' failed</span>';
+    if (c.stale) meta += ' · <span style="color:var(--stale-t)">' + c.stale + ' stale</span>';
+    return '<div class="card obj ' + objClass(o) + '">' +
+      '<div class="ring" style="--p:' + p.toFixed(1) + '" role="img" aria-label="' + pr + '% of prompts complete"><span><b>' + pr + '%</b><em>prompts</em></span></div>' +
+      '<div class="obj-body"><div class="obj-title">' + objChip(o) + '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(OBJECTIVES[o].name) + '</span></div>' +
+      '<div class="obj-desc">' + esc(OBJECTIVES[o].desc) + '</div>' +
+      (ms.length ? stack(ms) : '<span class="muted">No members assigned</span>') +
+      '<div class="obj-meta num">' + meta + '</div>' +
+      '<div class="obj-eta">' + esc(etaText(bs, ms)) + '</div></div></div>';
+  }).join('');
+}
+
+function ghBadge(s) {
+  if (s === 'accepted') return '<span class="badge ok" title="GitHub invite accepted">GitHub ✓</span>';
+  if (s === 'pending') return '<span class="badge warn" title="GitHub invite pending">GitHub ⏳</span>';
+  return '<span class="badge" title="GitHub invite not sent">GitHub –</span>';
+}
+function boolBadge(label, ok) {
+  return '<span class="badge ' + (ok ? 'ok' : 'bad') + '" title="' + label + (ok ? ' connected' : ' not connected') + '">' + label + ' ' + (ok ? '✓' : '✗') + '</span>';
+}
+
+function lastName(n) { var p = String(n || '').trim().split(/\s+/); return p[p.length - 1] || ''; }
+/* Rank: most completed batches first; ties broken by last name, then full name. */
+function rankMembers(members) {
+  var stats = {};
+  members.forEach(function (m) { stats[m.id] = memberStats(m, S.data.batches); });
+  var ranked = members.slice().sort(function (a, b) {
+    return stats[b.id].c.done - stats[a.id].c.done ||
+      lastName(a.name).localeCompare(lastName(b.name)) || a.name.localeCompare(b.name);
+  });
+  return { list: ranked, stats: stats };
+}
+function renderTeam(v) {
+  var q = S.search.trim().toLowerCase();
+  var r = rankMembers(v.members);
+  var rows = r.list.map(function (m, i) { return { m: m, rank: i + 1 }; }).filter(function (x) {
+    var m = x.m;
+    return !q || (m.name || '').toLowerCase().indexOf(q) >= 0 || (m.github || '').toLowerCase().indexOf(q) >= 0 ||
+      String(m.objective).toLowerCase().indexOf(q) >= 0;
+  });
+  if (!rows.length) {
+    $('teamBody').innerHTML = '<div class="card empty"><strong>No members found</strong>' + (q ? 'Try a different search.' : 'No members listed.') + '</div>';
+    return;
+  }
+  $('teamBody').innerHTML = '<div class="card mlist">' +
+    '<div class="mrow mhead" aria-hidden="true"><span>#</span><span>Member</span><span>Group</span><span class="c-badges">Onboarding</span><span>Completed</span><span class="c-counts">Status</span><span class="c-last">Last active</span></div>' +
+    rows.map(function (x) { return memberRow(x.m, r.stats[x.m.id], x.rank); }).join('') + '</div>';
+}
+function memberRow(m, st, rank) {
+  var ob = m.onboarding, c = st.c;
+  var gh = m.github ? '@' + esc(m.github) : 'GitHub not set';
+  return '<div class="mrow ' + objClass(m.objective) + '" role="button" tabindex="0" data-member="' + esc(m.id) + '" aria-label="Rank ' + rank + ', ' + esc(m.name) + ', group ' + esc(m.objective) + ', ' + c.done + ' of ' + st.total + ' batches done. Open details">' +
+    '<span class="rank num">' + rank + '</span>' +
+    '<span class="m-head">' + avatar(m, 32) + '<span class="m-id"><span class="m-name" title="' + esc(m.name) + '">' + esc(m.name) + '</span><span class="m-gh mono">' + gh + '</span></span></span>' +
+    '<span>' + objChip(m.objective) + '</span>' +
+    '<span class="badges c-badges">' + ghBadge(ob.github_invite) + boolBadge('Kaggle', ob.kaggle_linked) + boolBadge('Drive', ob.drive_access) + '</span>' +
+    '<span class="m-prog"><span class="bar" style="--bc:var(--oc)"><i style="width:' + st.pct.toFixed(1) + '%"></i></span>' +
+      '<span class="row num"><span>' + c.done + '/' + st.total + ' batches</span><span>' + Math.round(st.pct) + '%</span></span></span>' +
+    '<span class="counts c-counts">' + ['running', 'failed', 'stale'].map(function (k) {
+      return '<span class="s-' + k + '" title="' + STATUS_LABEL[k] + '"><span class="dot' + (k === 'running' && c[k] ? ' pulse' : '') + '"></span><b>' + c[k] + '</b> ' + k + '</span>';
+    }).join('') + '</span>' +
+    '<span class="c-last">' + relEl(st.lastActive) + '</span>' +
+    '</div>';
+}
+
+function renderBoard(v) {
+  var c = countBy(v.batches);
+  var keys = ['all'].concat(STATUSES);
+  $('statusFilters').innerHTML = keys.map(function (k) {
+    var n = k === 'all' ? v.batches.length : c[k];
+    var dot = k === 'all' ? '' : '<span class="dot s-' + k + '"></span>';
+    return '<button type="button" class="fchip" data-status="' + k + '" aria-pressed="' + (S.status === k) + '">' + dot + (k === 'all' ? 'All' : STATUS_LABEL[k]) + ' <span class="n">' + n + '</span></button>';
+  }).join('');
+  var ms = v.members.slice().sort(function (a, b) {
+    return OBJ_ORDER.indexOf(a.objective) - OBJ_ORDER.indexOf(b.objective) || a.name.localeCompare(b.name);
+  });
+  if (!ms.length) { $('board').innerHTML = '<div class="empty"><strong>No batches</strong>No members in this objective.</div>'; return; }
+  $('board').innerHTML = ms.map(function (m) {
+    var bs = v.batches.filter(function (b) { return b.member_id === m.id; }).sort(function (a, b) { return a.batch_id.localeCompare(b.batch_id, undefined, { numeric: true }); });
+    var cells = bs.length ? bs.map(function (b) {
+      var dim = S.status !== 'all' && b._st !== S.status;
+      return '<button type="button" class="cell s-' + b._st + (dim ? ' dim' : '') + '" data-batch="' + esc(b.batch_id) + '" aria-label="' +
+        esc(b.batch_id + ', ' + STATUS_LABEL[b._st] + ', ' + b.model + ', chunks ' + b.last_completed_chunk + ' of ' + b.chunks_total) + '"></button>';
+    }).join('') : '<span class="muted" style="font-size:12.5px;padding:4px 0">No batches assigned</span>';
+    return '<div class="brow"><div class="bname">' + avatar(m, 28) + '<div class="m-id" style="min-width:0"><div class="m-name" title="' + esc(m.name) + '">' + esc(m.name) + '</div><div class="muted">' + esc(m.objective) + '</div></div></div><div class="cells">' + cells + '</div></div>';
+  }).join('');
+}
+
+var VERB = { done: 'finished', running: 'is running', failed: 'failed on', stale: 'stalled on', pending: 'queued' };
+function renderActivity(v) {
+  var ev = v.batches.filter(function (b) { return ts(b.updated_at); })
+    .sort(function (a, b) { return ts(b.updated_at) - ts(a.updated_at); });
+  if (!ev.length) { $('activityBody').innerHTML = '<div class="empty"><strong>No activity yet</strong>Runs will appear here once batches start.</div>'; return; }
+  var shown = ev.slice(0, S.activityLimit);
+  var html = '<div class="timeline">' + shown.map(function (b) {
+    var m = S.memberById[b.member_id] || { name: b.member_id || 'Unknown', objective: b.objective };
+    var extra = b._st === 'running' || b._st === 'stale' ? ' · chunk ' + b.last_completed_chunk + '/' + b.chunks_total : '';
+    return '<div class="ev"><div class="dotcol s-' + b._st + '"><span class="dot' + (b._st === 'running' ? ' pulse' : '') + '"></span></div>' + avatar(m, 32) +
+      '<div class="ev-text"><div><b>' + esc(m.name) + '</b> ' + VERB[b._st] + ' <button type="button" class="mono" data-batch="' + esc(b.batch_id) + '" style="border:0;background:none;padding:0;color:var(--primary);cursor:pointer">' + esc(b.batch_id) + '</button> <span class="sr-only">(' + STATUS_LABEL[b._st] + ')</span></div>' +
+      '<div class="ev-sub">' + esc(b.model) + extra + ' · ' + relEl(b.updated_at) + '</div></div></div>';
+  }).join('') + '</div>';
+  if (ev.length > shown.length) html += '<div class="more-row"><button type="button" class="btn" id="moreBtn">Show more (' + (ev.length - shown.length) + ' older)</button></div>';
+  $('activityBody').innerHTML = html;
+}
+
+function resumeChunk(b) { return Math.min(b.chunks_total || Infinity, b.last_completed_chunk + 1); }
+function resumeCmd(b) { return 'run_batch(batch_id="' + b.batch_id + '", start_chunk=' + resumeChunk(b) + ')'; }
+function renderFailures(v) {
+  var list = v.batches.filter(function (b) { return b._st === 'failed' || b._st === 'stale'; })
+    .sort(function (a, b) { return (ts(b.updated_at) || 0) - (ts(a.updated_at) || 0); });
+  if (!list.length) {
+    $('failBody').innerHTML = '<div class="empty"><div class="ok-icon">' + ICON.check + '</div><strong>Nothing to fix — all runs healthy.</strong></div>';
+    return;
+  }
+  $('failBody').innerHTML = '<div class="tbl-wrap"><table><thead><tr><th>Batch</th><th>Member</th><th>Status</th><th>Resume from</th><th>Error</th><th>Last update</th><th>Actions</th></tr></thead><tbody>' +
+    list.map(function (b) {
+      var m = S.memberById[b.member_id] || { name: b.member_id, objective: b.objective };
+      var err = b.error || (b._st === 'stale' ? 'No heartbeat for > ' + CONFIG.staleMinutes + ' min' : '—');
+      return '<tr><td><button type="button" class="mono" data-batch="' + esc(b.batch_id) + '" style="border:0;background:none;padding:0;color:var(--primary);cursor:pointer">' + esc(b.batch_id) + '</button></td>' +
+        '<td><span class="owner" style="color:var(--text)">' + avatar(m, 24) + '<span style="max-width:160px;overflow:hidden;text-overflow:ellipsis" title="' + esc(m.name) + '">' + esc(m.name) + '</span></span></td>' +
+        '<td>' + statusChip(b._st) + '</td>' +
+        '<td class="num">chunk <span class="mono">' + resumeChunk(b) + ' / ' + b.chunks_total + '</span></td>' +
+        '<td class="err" title="' + esc(err) + '">' + esc(err) + '</td>' +
+        '<td>' + relEl(b.updated_at) + '</td>' +
+        '<td><div class="actions">' + btnLink(b.kaggle_url, 'Open Kaggle') + btnLink(batchDrive(b), 'Open Drive') +
+        '<button type="button" class="btn" data-copy="' + esc(b.batch_id) + '" aria-label="Copy resume command for ' + esc(b.batch_id) + '">' + ICON.copy + 'Copy resume cmd</button></div></td></tr>';
+    }).join('') + '</tbody></table></div>';
+}
+
+function renderSetup() {
+  var tasks = S.data.setup_tasks;
+  if (!tasks.length) { $('setupBody').innerHTML = '<div class="empty" style="padding:20px"><strong>No setup tasks listed</strong></div>'; return; }
+  var dn = tasks.filter(function (t) { return t.done; }).length;
+  $('setupBody').innerHTML =
+    '<div class="setup-head"><span class="num"><b>' + dn + '/' + tasks.length + '</b> setup tasks done</span><span class="muted num">' + Math.round(pct(dn, tasks.length)) + '%</span></div>' +
+    '<div class="bar" style="--bc:var(--neutral)"><i style="width:' + pct(dn, tasks.length).toFixed(1) + '%"></i></div>' +
+    '<ul class="tasks">' + tasks.map(function (t) {
+      var m = S.memberById[t.owner];
+      var owner = m ? avatar(m, 22) + '<span>' + esc(m.name) + '</span>' : (t.owner ? '<span>' + esc(t.owner) + '</span>' : '<span>Unassigned</span>');
+      return '<li><span class="check' + (t.done ? ' on' : '') + '">' + (t.done ? ICON.check : '') + '</span><span class="t">' + esc(t.task) +
+        '<span class="sr-only">' + (t.done ? ' (done)' : ' (open)') + '</span></span><span class="owner">' + owner + '</span></li>';
+    }).join('') + '</ul>';
+}
+
+function renderFooter() {
+  var g = S.data.generated_at;
+  $('footer').innerHTML = 'Data generated ' + (g ? '<time datetime="' + esc(g) + '">' + esc(fmtExact(g)) + '</time>' : '—') +
+    ' by GitHub Actions' +
+    (repoUrl() ? ' · <a href="' + esc(repoUrl()) + '" target="_blank" rel="noopener">GitHub repo</a>' : '') +
+    (driveUrl() ? ' · <a href="' + esc(driveUrl()) + '" target="_blank" rel="noopener">Drive</a>' : '') +
+    (S.data.dataset ? ' · ' + esc(S.data.dataset) : '');
+}
+
+function renderAll() {
+  if (!S.data) return;
+  var v = view();
+  renderBanner(); renderSynced(); renderMeta();
+  renderKPIs(v); renderObjectives(v); renderTeam(v); renderBoard(v);
+  renderActivity(v); renderFailures(v); renderSetup(); renderFooter();
+  $('overviewHint').textContent = 'All groups';
+  if (S.drawer) renderDrawer(true);
+  S.first = false;
+}
+
+/* ================= Drawer ================= */
+function openDrawer(memberId, batchId) {
+  var m = S.memberById[memberId];
+  if (!m) return;
+  var wasOpen = !!S.drawer;
+  S.drawer = { memberId: memberId, batchId: batchId || null, returnFocus: wasOpen ? S.drawer.returnFocus : document.activeElement };
+  renderDrawer(false);
+  var d = $('drawer');
+  d.classList.add('open'); d.setAttribute('aria-hidden', 'false');
+  $('overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  hideTip();
+  setTimeout(function () {
+    var close = d.querySelector('[data-close]');
+    (close || d).focus();
+    var hl = d.querySelector('tr.hl');
+    if (hl) hl.scrollIntoView({ block: 'center', behavior: REDUCED ? 'auto' : 'smooth' });
+  }, 30);
+}
+function closeDrawer() {
+  if (!S.drawer) return;
+  var rf = S.drawer.returnFocus;
+  S.drawer = null;
+  var d = $('drawer');
+  d.classList.remove('open'); d.setAttribute('aria-hidden', 'true');
+  $('overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  if (rf && document.body.contains(rf) && rf.focus) rf.focus();
+}
+function renderDrawer(keepScroll) {
+  var d = $('drawer'), top = d.scrollTop;
+  var m = S.memberById[S.drawer.memberId];
+  if (!m) { closeDrawer(); return; }
+  var st = memberStats(m, S.data.batches), ob = m.onboarding;
+  var bs = st.batches.slice().sort(function (a, b) { return a.batch_id.localeCompare(b.batch_id, undefined, { numeric: true }); });
+  var focus = S.drawer.batchId ? S.batchById[S.drawer.batchId] : null;
+  var pd = 0, pt = 0, gpu = 0;
+  bs.forEach(function (b) { pd += b.prompts_done; pt += b.prompts_total; gpu += +b.gpu_minutes || 0; });
+  var ghState = { accepted: 'Accepted', pending: 'Invite pending', not_sent: 'Invite not sent' }[ob.github_invite] || 'Unknown';
+
+  var focusBlock = '';
+  if (focus && focus.member_id === m.id) {
+    var fst = focus._st || effStatus(focus);
+    focusBlock = '<div class="d-sec"><h4>Batch ' + esc(focus.batch_id) + '</h4><dl class="d-list">' +
+      '<dt>Status</dt><dd>' + statusChip(fst) + '</dd>' +
+      '<dt>Model</dt><dd class="mono">' + esc(focus.model) + '</dd>' +
+      '<dt>Chunks</dt><dd class="num">' + focus.last_completed_chunk + ' / ' + focus.chunks_total + '</dd>' +
+      '<dt>Prompts</dt><dd class="num">' + focus.prompts_done.toLocaleString() + ' / ' + focus.prompts_total.toLocaleString() + '</dd>' +
+      '<dt>Started</dt><dd>' + (focus.started_at ? esc(fmtExact(focus.started_at)) : '—') + '</dd>' +
+      '<dt>Updated</dt><dd>' + relEl(focus.updated_at) + '</dd>' +
+      (focus.commit_sha ? '<dt>Commit</dt><dd><a class="mono" href="' + esc(commitUrl(focus)) + '" target="_blank" rel="noopener">' + esc(String(focus.commit_sha).slice(0, 7)) + ' ↗</a></dd>' : '') +
+      (focus.error ? '<dt>Error</dt><dd class="d-err">' + esc(focus.error) + '</dd>' : '') +
+      '</dl>' +
+      (fst === 'failed' || fst === 'stale' ? '<div class="actions" style="margin-top:12px"><button type="button" class="btn" data-copy="' + esc(focus.batch_id) + '">' + ICON.copy + 'Copy resume cmd</button>' + btnLink(focus.kaggle_url, 'Kaggle') + btnLink(batchDrive(focus), 'Drive') + '</div>' : '') +
+      '</div>';
+  }
+
+  $('drawerBody').innerHTML =
+    '<div class="d-head ' + objClass(m.objective) + '">' + avatar(m, 48) +
+      '<div class="m-id" style="flex:1;min-width:0"><h3 id="drawerTitle">' + esc(m.name) + '</h3>' +
+      '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="mono muted">' + (m.github ? '@' + esc(m.github) : 'GitHub not set') + '</span>' + objChip(m.objective) + '</div></div>' +
+      '<button type="button" class="icon-btn" data-close aria-label="Close details">' + ICON.close + '</button></div>' +
+    '<div class="d-sec"><div class="d-stats">' +
+      '<div class="d-stat"><b>' + st.c.done + '/' + st.total + '</b><span>batches done</span></div>' +
+      '<div class="d-stat"><b>' + Math.round(pct(pd, pt)) + '%</b><span>prompts</span></div>' +
+      '<div class="d-stat"><b>' + (gpu >= 60 ? (gpu / 60).toFixed(1) + ' h' : gpu + ' m') + '</b><span>GPU time</span></div>' +
+    '</div></div>' +
+    focusBlock +
+    '<div class="d-sec"><h4>Onboarding</h4><dl class="d-list">' +
+      '<dt>GitHub</dt><dd>' + ghBadge(ob.github_invite) + ' <span class="muted">' + ghState + '</span></dd>' +
+      '<dt>Kaggle</dt><dd>' + boolBadge('Kaggle', ob.kaggle_linked) + ' <span class="muted">' + (ob.kaggle_linked ? 'Linked' : 'Not linked') + '</span></dd>' +
+      '<dt>Drive</dt><dd>' + boolBadge('Drive', ob.drive_access) + ' <span class="muted">' + (ob.drive_access ? 'Has access' : 'No access yet') + '</span></dd>' +
+      '<dt>Last active</dt><dd>' + relEl(st.lastActive) + '</dd>' +
+    '</dl></div>' +
+    '<div class="d-sec"><h4>Run history</h4>' +
+      (bs.length ? '<div class="tbl-wrap"><table><thead><tr><th>Batch</th><th>Model</th><th>Status</th><th>Chunks</th><th>Prompts</th><th>Updated</th><th>Links</th></tr></thead><tbody>' +
+        bs.map(function (b) {
+          var s = b._st || effStatus(b);
+          return '<tr' + (focus && focus.batch_id === b.batch_id ? ' class="hl"' : '') + '><td class="mono">' + esc(b.batch_id) + '</td>' +
+            '<td class="mono" style="font-size:11.5px">' + esc(b.model) + '</td><td>' + statusChip(s) + '</td>' +
+            '<td class="num">' + b.last_completed_chunk + '/' + b.chunks_total + '</td>' +
+            '<td class="num">' + kfmt(b.prompts_done) + '/' + kfmt(b.prompts_total) + '</td>' +
+            '<td>' + relEl(b.updated_at) + '</td>' +
+            '<td class="links">' + extLink(b.kaggle_url, 'Kaggle') + extLink(batchDrive(b), 'Drive') + extLink(commitUrl(b), 'Commit') + '</td></tr>';
+        }).join('') + '</tbody></table></div>'
+      : '<div class="muted">No batches assigned yet.</div>') +
+    '</div>';
+  if (keepScroll) d.scrollTop = top;
+}
+
+/* ================= Tooltip ================= */
+function showTip(el) {
+  var b = S.batchById[el.getAttribute('data-batch')];
+  if (!b) return;
+  var s = b._st || effStatus(b), tip = $('tip');
+  tip.innerHTML = '<div class="mono">' + esc(b.batch_id) + ' · ' + STATUS_LABEL[s] + '</div>' +
+    '<div>' + esc(b.model) + '</div><div>Chunks ' + b.last_completed_chunk + ' / ' + b.chunks_total + '</div>' +
+    '<div>Updated ' + esc(ts(b.updated_at) ? rel(b.updated_at) : '—') + '</div>';
+  tip.hidden = false;
+  var r = el.getBoundingClientRect(), tr = tip.getBoundingClientRect();
+  var x = Math.max(8, Math.min(window.innerWidth - tr.width - 8, r.left + r.width / 2 - tr.width / 2));
+  var y = r.top - tr.height - 8;
+  if (y < 116) y = r.bottom + 8;
+  tip.style.left = x + 'px'; tip.style.top = y + 'px';
+}
+function hideTip() { $('tip').hidden = true; }
+
+/* ================= Toast / clipboard ================= */
+var toastTimer;
+function toast(msg) {
+  var t = $('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function () { t.classList.remove('show'); }, 1800);
+}
+function copyText(text) {
+  function fallback() {
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      var ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      toast(ok ? 'Copied' : 'Copy failed');
+    } catch (e) { toast('Copy failed'); }
+  }
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(function () { toast('Copied'); }, fallback);
+    } else fallback();
+  } catch (e) { fallback(); }
+}
+
+/* ================= Relative-time tick ================= */
+function tickRel() {
+  document.querySelectorAll('[data-rel]').forEach(function (el) {
+    el.textContent = (el.getAttribute('data-prefix') || '') + rel(el.getAttribute('data-rel'));
+  });
+}
+
+/* ================= Loading ================= */
+function load(manual) {
+  if (S.loading) return;
+  S.loading = true;
+  $('refreshBtn').classList.add('spinning');
+  function getJSON(url) {
+    try {
+      return fetch(url + '?t=' + Date.now(), { cache: 'no-store' }).then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      });
+    } catch (e) { return Promise.reject(e); }
+  }
+  function list(j, key) { return Array.isArray(j) ? j : (j && Array.isArray(j[key]) ? j[key] : null); }
+  var F = CONFIG.files, failed = [];
+  function opt(url, name) { return getJSON(url).catch(function () { failed.push(name); return null; }); }
+  var p = Promise.all([opt(F.config, 'config.json'), opt(F.members, 'members.json'), opt(F.batches, 'batches.json'), opt(F.setup_tasks, 'setup_tasks.json')])
+  .then(function (r) {
+    var cfg = r[0] || {}, members = list(r[1], 'members'), batches = list(r[2], 'batches');
+    if (!members) throw new Error('members.json missing or invalid');
+    if (cfg.objectives) {
+      Object.keys(cfg.objectives).forEach(function (k) { OBJECTIVES[k.toUpperCase()] = cfg.objectives[k]; });
+    }
+    S.loadErrors = failed;
+    S.data = normalize({
+      generated_at: cfg.generated_at || null, subtitle: cfg.subtitle || '', repo: cfg.repo || '', drive_url: cfg.drive_url || '', dataset: cfg.dataset || '',
+      members: members, batches: batches || [], setup_tasks: list(r[3], 'setup_tasks') || []
+    });
+  });
+  p.catch(function () {
+    S.loadErrors = failed.length ? failed : ['members.json'];
+    if (S.data && manual) toast('Refresh failed — showing last data');
+  }).then(function () {
+    if (!S.data) { renderLoadError(); return; }
+    renderAll();
+    if (manual) toast('Data refreshed');
+  }).catch(function () { /* render errors are not expected; keep console clean */ })
+    .then(function () {
+      S.loading = false;
+      setTimeout(function () { $('refreshBtn').classList.remove('spinning'); }, 300);
+    });
+}
+
+/* ================= Theme ================= */
+function currentTheme() {
+  var t = document.documentElement.getAttribute('data-theme');
+  if (t) return t;
+  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+function toggleTheme() {
+  var next = currentTheme() === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem('rcs-theme', next); } catch (e) {}
+  $('themeBtn').setAttribute('aria-label', next === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+}
+
+/* ================= Section nav ================= */
+function setupNav() {
+  var links = document.querySelectorAll('#secnav a');
+  links.forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      var sec = $(a.getAttribute('data-sec'));
+      if (!sec) return;
+      e.preventDefault();
+      sec.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'start' });
+      try { history.replaceState(null, '', '#' + sec.id); } catch (err) {}
+      setActive(sec.id);
+    });
+  });
+  function setActive(id) {
+    links.forEach(function (a) {
+      var on = a.getAttribute('data-sec') === id;
+      a.classList.toggle('active', on);
+      if (on) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
+    });
+    var act = document.querySelector('#secnav a.active');
+    if (act && act.scrollIntoView && window.innerWidth < 768) {
+      var nav = $('secnav');
+      nav.scrollLeft = act.offsetLeft - 16;
+    }
+  }
+  if (!('IntersectionObserver' in window)) { setActive('overview'); return; }
+  var visible = {};
+  var ids = ['overview', 'team', 'batches', 'activity', 'failures', 'setup'];
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) { visible[en.target.id] = en.isIntersecting; });
+    var atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+    if (atBottom) { setActive('setup'); return; }
+    for (var i = 0; i < ids.length; i++) if (visible[ids[i]]) { setActive(ids[i]); return; }
+  }, { rootMargin: '-120px 0px -55% 0px', threshold: 0 });
+  ids.forEach(function (id) { io.observe($(id)); });
+  window.addEventListener('scroll', function () {
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) setActive('setup');
+  }, { passive: true });
+  setActive('overview');
+}
+
+/* ================= Events ================= */
+function bind() {
+  $('themeBtn').setAttribute('aria-label', currentTheme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  $('themeBtn').addEventListener('click', toggleTheme);
+  $('refreshBtn').addEventListener('click', function () { load(true); });
+  $('search').addEventListener('input', function (e) { S.search = e.target.value; if (S.data) renderTeam(view()); });
+  $('overlay').addEventListener('click', closeDrawer);
+
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest ? e.target : e.target.parentElement;
+    if (!t) return;
+    var el;
+    if ((el = t.closest('[data-status]'))) { S.status = el.getAttribute('data-status'); renderBoard(view()); return; }
+    if ((el = t.closest('[data-copy]'))) {
+      var b = S.batchById[el.getAttribute('data-copy')];
+      if (b) copyText(resumeCmd(b));
+      return;
+    }
+    if ((el = t.closest('[data-close]'))) { closeDrawer(); return; }
+    if (t.closest('#moreBtn')) { S.activityLimit += 20; renderActivity(view()); return; }
+    if ((el = t.closest('[data-batch]')) && !t.closest('#drawer')) {
+      var bb = S.batchById[el.getAttribute('data-batch')];
+      if (bb) openDrawer(bb.member_id, bb.batch_id);
+      return;
+    }
+    if ((el = t.closest('[data-member]'))) { openDrawer(el.getAttribute('data-member')); }
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && S.drawer) { e.preventDefault(); closeDrawer(); return; }
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('[data-member][role="button"]')) {
+      e.preventDefault(); openDrawer(e.target.getAttribute('data-member'));
+    }
+  });
+
+  // Focus trap inside the drawer
+  $('drawer').addEventListener('keydown', function (e) {
+    if (e.key !== 'Tab') return;
+    var f = Array.prototype.filter.call(
+      this.querySelectorAll('a[href], button:not([disabled]), input, select, [tabindex]:not([tabindex="-1"])'),
+      function (n) { return n.offsetParent !== null; });
+    if (!f.length) { e.preventDefault(); return; }
+    var first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && (document.activeElement === first || document.activeElement === this)) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+
+  // Heatmap tooltips (hover + keyboard focus)
+  var board = $('board');
+  board.addEventListener('mouseover', function (e) { var c = e.target.closest && e.target.closest('.cell'); if (c) showTip(c); });
+  board.addEventListener('mouseout', function (e) { var c = e.target.closest && e.target.closest('.cell'); if (c) hideTip(); });
+  board.addEventListener('focusin', function (e) { if (e.target.classList.contains('cell')) showTip(e.target); });
+  board.addEventListener('focusout', hideTip);
+  board.addEventListener('scroll', hideTip, { passive: true });
+  window.addEventListener('scroll', hideTip, { passive: true });
+}
+
+/* ================= Init ================= */
+bind();
+setupNav();
+load(false);
+setInterval(function () { if (!document.hidden) load(false); }, CONFIG.refreshMs);
+setInterval(tickRel, CONFIG.relTickMs);
+document.addEventListener('visibilitychange', function () { if (!document.hidden) tickRel(); });
+
+})();
+</script>
+</body>
+</html>

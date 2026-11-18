@@ -1,0 +1,21 @@
+{
+  "generated_at": "2026-11-18T10:27:23.536Z",
+  "subtitle": "Group 10 · Twin-2K-500",
+  "repo": "bhuwanadhikari/rcs-group10-lm-psychometrics",
+  "drive_url": "https://drive.google.com/drive/folders/1rotD-8kRflu4IQDgM4_9OzXlb-KO1VVM",
+  "dataset": "Twin-2K-500 (Toubia et al., 2025)",
+  "objectives": {
+    "O1A": {
+      "name": "Prompt outliers",
+      "desc": "Variants that shift responses far from the matrix consensus"
+    },
+    "O1B": {
+      "name": "Accuracy after artifact removal",
+      "desc": "Averaged predictions scored against real respondents"
+    },
+    "O1C": {
+      "name": "Persona depth",
+      "desc": "Demographics → summaries → full response histories"
+    }
+  }
+}

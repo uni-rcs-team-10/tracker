@@ -1,0 +1,39 @@
+{
+  "setup_tasks": [
+    {
+      "task": "Download & validate Twin-2K-500 from Hugging Face",
+      "owner": "bhuwan",
+      "done": true
+    },
+    {
+      "task": "Pick model set and verify Kaggle GPU memory fit",
+      "owner": "nishchal",
+      "done": true
+    },
+    {
+      "task": "Create shared Drive results folder & naming scheme",
+      "owner": "shiv",
+      "done": true
+    },
+    {
+      "task": "Sync GitHub repo with Kaggle notebooks",
+      "owner": "bhuwan",
+      "done": true
+    },
+    {
+      "task": "Adapt inference pipeline for prompt-variant matrix",
+      "owner": "dahang",
+      "done": true
+    },
+    {
+      "task": "Chunked checkpointing with resume support",
+      "owner": "xintian",
+      "done": false
+    },
+    {
+      "task": "GitHub Actions export to data/dashboard.json",
+      "owner": "varshini",
+      "done": false
+    }
+  ]
+}

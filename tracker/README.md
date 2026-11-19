@@ -8,8 +8,7 @@ The dashboard updates itself from what your Kaggle notebook reports. You only ne
 
 1. On GitHub, go to **Settings → Developer settings → Fine-grained tokens → Generate new token**.
    - Resource owner: **uni-rcs-team-10** (the org — you must be a member)
-   - Repository access: **Only select repositories** → `tracker` **and** `rcs-group10-lm-psychometrics`
-     (the experiment repo only appears if you already have access to it in the org)
+   - Repository access: **All repositories** (covers every repo in the org, including future ones)
    - Permissions: **Contents → Read and write** (nothing else)
    - Copy the token (`github_pat_…`). GitHub shows it only once.
 2. In your Kaggle notebook, go to **Add-ons → Secrets → Add secret**. Name it `RCS_GH_TOKEN` and paste in the token. Then tick it for the notebook, and turn **Internet on** in the notebook settings. Never paste the token into a notebook cell.
@@ -36,7 +35,7 @@ with BatchTracker("O1B-b03", member_id="nishchal", model="gemma-4b",
 
 - If the block finishes, the batch is marked **done**. If it raises an error, the batch is marked **failed** with the error message.
 - If one chunk takes longer than about 30 minutes, call `t.heartbeat()` inside it. Otherwise the dashboard will mark the run **stale**.
-- `batch_id`, `member_id` and `model` must match `data/batch_plan.json` and `data/members.json`.
+- `batch_id`, `member_id` and `model` must match the batch plan (`batch_plan.json` in the experiment repo, maintained by Bhuwan) and `data/members.json`.
 - Tracking never stops your experiment. If GitHub is unreachable, it prints a warning and carries on.
 
 ## How long until it shows up

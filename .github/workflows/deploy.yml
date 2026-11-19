@@ -1,6 +1,7 @@
 # Builds data/batches.json from data/batch_plan.json + data/runs/*.json and deploys the site.
 # Requires: Settings -> Pages -> Source = "GitHub Actions".
-# Optional secret GH_ADMIN_TOKEN (admin read on this repo) to sync GitHub invite status.
+# Secret GH_ADMIN_TOKEN (org token, see README) fetches the batch plan from the experiment repo
+# and syncs GitHub invite status. Without it, the cached data/batch_plan.json is used.
 name: Build data & deploy dashboard
 
 on:
@@ -33,7 +34,6 @@ jobs:
       - name: Build dashboard data
         run: python3 scripts/build_data.py
         env:
-          REPO: ${{ github.repository }}
           GH_ADMIN_TOKEN: ${{ secrets.GH_ADMIN_TOKEN }}
       - name: Prepare site
         run: |

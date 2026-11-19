@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A static dashboard ("RCS Tracker") for a 9-person Universität Trier research team (Group 10, supervisor Nils Schwager) running prompt-variant experiments on the Twin-2K-500 dataset in Kaggle. It is a **separate utility**, hosted in its own public repo `uni-rcs-team-10/tracker` (a free GitHub org) and published on GitHub Pages at https://uni-rcs-team-10.github.io/tracker/. The team's experiment code lives in Bhuwan's **private** repo `bhuwanadhikari/rcs-group10-lm-psychometrics`. The tracker never writes there. `config.json`'s `repo` points to that private repo only to build commit links, which work only for its collaborators.
+A static dashboard ("RCS Tracker") for a 9-person Universität Trier research team (Group 10, supervisor Nils Schwager) running prompt-variant experiments on the Twin-2K-500 dataset in Kaggle. It is a **separate utility**, hosted in its own public repo `uni-rcs-team-10/tracker` (a free GitHub org) and published on GitHub Pages at https://uni-rcs-team-10.github.io/tracker/. The team's experiment code lives in the org's **private** repo `uni-rcs-team-10/rcs-group10-lm-psychometrics`. The tracker never writes there. `config.json`'s `repo` points to that private repo only to build commit links, which work only for its collaborators.
 
 Hard constraints (keep them):
 - Static files only: `index.html` (markup), `css/styles.css`, `js/*.js`, `data/*.json`. No build step, no frameworks, no backend.

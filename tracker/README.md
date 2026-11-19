@@ -4,11 +4,15 @@ The dashboard updates itself from what your Kaggle notebook reports. You only ne
 
 ## 1. One-time setup (each member)
 
+**Who needs this:** every member who runs batches on Kaggle. Each person creates their **own** token; never share yours. If you only view the dashboard, you don't need a token.
+
 1. On GitHub, go to **Settings → Developer settings → Fine-grained tokens → Generate new token**.
-   - Resource owner: **uni-rcs-team-10** (the tracker org — you must be a member)
-   - Repository access: **Only select repositories** → `tracker`
+   - Resource owner: **uni-rcs-team-10** (the org — you must be a member)
+   - Repository access: **Only select repositories** → `tracker` **and** `rcs-group10-lm-psychometrics`
+     (the experiment repo only appears if you already have access to it in the org)
    - Permissions: **Contents → Read and write** (nothing else)
-2. In your Kaggle notebook, go to **Add-ons → Secrets → Add secret**. Name it `RCS_GH_TOKEN` and paste in the token. Then switch it on for the notebook.
+   - Copy the token (`github_pat_…`). GitHub shows it only once.
+2. In your Kaggle notebook, go to **Add-ons → Secrets → Add secret**. Name it `RCS_GH_TOKEN` and paste in the token. Then tick it for the notebook, and turn **Internet on** in the notebook settings. Never paste the token into a notebook cell.
 3. Make `rcs_tracker.py` importable in the notebook. Either copy the file in, or download it in a cell:
    `!wget -q https://raw.githubusercontent.com/uni-rcs-team-10/tracker/main/tracker/rcs_tracker.py`
 

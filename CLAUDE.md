@@ -39,7 +39,7 @@ All content is in `data/*.json`. The code holds no data, only file paths and tim
 
 ## Automation pipeline
 
-1. Kaggle notebooks use `tracker/rcs_tracker.py` (`BatchTracker`, a context manager) to PUT `data/runs/<batch_id>.json` through the GitHub Contents API. The token is the Kaggle Secret `RCS_GH_TOKEN`. Start/done/failed commits trigger a deploy. Progress heartbeats (sent at most every 10 min) are committed with `[skip ci]` and picked up by the 15-minute cron. Setup notes for the team are in `tracker/README.md`.
+1. Kaggle notebooks use `tracker/rcs_tracker.py` (`BatchTracker`, a context manager) to PUT `data/runs/<batch_id>.json` through the GitHub Contents API. The token is each member's own Kaggle Secret `RCS_GH_TOKEN`, a fine-grained token covering both org repos (tracker + experiment); the tracker code only ever writes to `tracker`. Start/done/failed commits trigger a deploy. Progress heartbeats (sent at most every 10 min) are committed with `[skip ci]` and picked up by the 15-minute cron. Setup notes for the team are in `tracker/README.md`.
 2. `.github/workflows/deploy.yml` (Pages source must be "GitHub Actions") runs `scripts/build_data.py`, which merges plan and runs into `batches.json`, stamps `config.json` `generated_at`, and optionally syncs GitHub invites. It then deploys `index.html`, `css/`, `js/` and the four dashboard JSON files.
 3. `CONFIG.staleMinutes` is 45 (10-minute heartbeat + 15-minute cron + slack). Lowering it will make healthy runs flash as stale.
 

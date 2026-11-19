@@ -1,0 +1,508 @@
+{
+  "batches": [
+    {
+      "batch_id": "O1A-b01",
+      "member_id": "bhuwan",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1A-b02",
+      "member_id": "bhuwan",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1A-b03",
+      "member_id": "bhuwan",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1A-b04",
+      "member_id": "bhuwan",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1A-b05",
+      "member_id": "bhuwan",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1A-b06",
+      "member_id": "bhuwan",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1A-b07",
+      "member_id": "bhuwan",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1A-b08",
+      "member_id": "bhuwan",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1A-b09",
+      "member_id": "nishchal",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1A-b10",
+      "member_id": "nishchal",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1A-b11",
+      "member_id": "nishchal",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1A-b12",
+      "member_id": "nishchal",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1A-b13",
+      "member_id": "nishchal",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1A-b14",
+      "member_id": "nishchal",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1A-b15",
+      "member_id": "nishchal",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1A-b16",
+      "member_id": "nishchal",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1A-b17",
+      "member_id": "surya",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1A-b18",
+      "member_id": "surya",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1A-b19",
+      "member_id": "surya",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1A-b20",
+      "member_id": "surya",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1A-b21",
+      "member_id": "surya",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1A-b22",
+      "member_id": "surya",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1A-b23",
+      "member_id": "surya",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1A-b24",
+      "member_id": "surya",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1B-b01",
+      "member_id": "shiv",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1B-b02",
+      "member_id": "shiv",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1B-b03",
+      "member_id": "shiv",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1B-b04",
+      "member_id": "shiv",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1B-b05",
+      "member_id": "shiv",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1B-b06",
+      "member_id": "shiv",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1B-b07",
+      "member_id": "shiv",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1B-b08",
+      "member_id": "shiv",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1B-b09",
+      "member_id": "dahang",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1B-b10",
+      "member_id": "dahang",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1B-b11",
+      "member_id": "dahang",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1B-b12",
+      "member_id": "dahang",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1B-b13",
+      "member_id": "dahang",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1B-b14",
+      "member_id": "dahang",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1B-b15",
+      "member_id": "dahang",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1B-b16",
+      "member_id": "dahang",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1B-b17",
+      "member_id": "xintian",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1B-b18",
+      "member_id": "xintian",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1B-b19",
+      "member_id": "xintian",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1B-b20",
+      "member_id": "xintian",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1B-b21",
+      "member_id": "xintian",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1B-b22",
+      "member_id": "xintian",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1B-b23",
+      "member_id": "xintian",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1B-b24",
+      "member_id": "xintian",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1C-b01",
+      "member_id": "varshini",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1C-b02",
+      "member_id": "varshini",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1C-b03",
+      "member_id": "varshini",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1C-b04",
+      "member_id": "varshini",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1C-b05",
+      "member_id": "varshini",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1C-b06",
+      "member_id": "varshini",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1C-b07",
+      "member_id": "varshini",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1C-b08",
+      "member_id": "varshini",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1C-b09",
+      "member_id": "dhanashri",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1C-b10",
+      "member_id": "dhanashri",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1C-b11",
+      "member_id": "dhanashri",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1C-b12",
+      "member_id": "dhanashri",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1C-b13",
+      "member_id": "dhanashri",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1C-b14",
+      "member_id": "dhanashri",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1C-b15",
+      "member_id": "dhanashri",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1C-b16",
+      "member_id": "dhanashri",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1C-b17",
+      "member_id": "rachana",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1C-b18",
+      "member_id": "rachana",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1C-b19",
+      "member_id": "rachana",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1C-b20",
+      "member_id": "rachana",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1C-b21",
+      "member_id": "rachana",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1C-b22",
+      "member_id": "rachana",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1C-b23",
+      "member_id": "rachana",
+      "model": "gemma-4b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    },
+    {
+      "batch_id": "O1C-b24",
+      "member_id": "rachana",
+      "model": "mistral-3.3b",
+      "chunks_total": 40,
+      "prompts_total": 10000
+    }
+  ]
+}

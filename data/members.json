@@ -1,24 +1,24 @@
 {
   "members": [
-    { "id": "bhuwan",    "name": "Bhuwan Adhikari",                   "github": "bhuwanadhikari", "avatar_url": null, "objective": "O1A",
+    { "id": "bhuwan",    "name": "Bhuwan Adhikari",                   "github": "bhuwanadhikari", "avatar_url": null, "objective": "O1B",
       "onboarding": { "github_invite": "accepted", "kaggle_linked": true,  "drive_access": true } },
-    { "id": "nishchal",  "name": "Nishchal Basyal",                   "github": null, "avatar_url": null, "objective": "O1A",
+    { "id": "nishchal",  "name": "Nishchal Basyal",                   "github": null, "avatar_url": null, "objective": "O1B",
       "onboarding": { "github_invite": "accepted", "kaggle_linked": true,  "drive_access": true } },
     { "id": "surya",     "name": "Surya Elsy Alex",                   "github": null, "avatar_url": null, "objective": "O1A",
       "onboarding": { "github_invite": "accepted", "kaggle_linked": true,  "drive_access": true } },
 
     { "id": "shiv",      "name": "Shiv Prasad Gaire",                 "github": null, "avatar_url": null, "objective": "O1B",
       "onboarding": { "github_invite": "accepted", "kaggle_linked": true,  "drive_access": true } },
-    { "id": "dahang",    "name": "Dahang Jiang",                      "github": null, "avatar_url": null, "objective": "O1B",
+    { "id": "dahang",    "name": "Dahang Jiang",                      "github": null, "avatar_url": null, "objective": "O1C",
       "onboarding": { "github_invite": "accepted", "kaggle_linked": true,  "drive_access": true } },
-    { "id": "xintian",   "name": "Xintian Liu",                       "github": null, "avatar_url": null, "objective": "O1B",
+    { "id": "xintian",   "name": "Xintian Liu",                       "github": null, "avatar_url": null, "objective": "O1C",
       "onboarding": { "github_invite": "accepted", "kaggle_linked": true,  "drive_access": true } },
 
-    { "id": "varshini",  "name": "Varshini Naguvanahalli Govindaraju", "github": null, "avatar_url": null, "objective": "O1C",
+    { "id": "varshini",  "name": "Varshini Naguvanahalli Govindaraju", "github": null, "avatar_url": null, "objective": "O1A",
       "onboarding": { "github_invite": "accepted", "kaggle_linked": true,  "drive_access": true } },
     { "id": "dhanashri", "name": "Dhanashri Rane",                    "github": null, "avatar_url": null, "objective": "O1C",
       "onboarding": { "github_invite": "pending",  "kaggle_linked": true,  "drive_access": false } },
-    { "id": "rachana",   "name": "Rachana Rao",                       "github": null, "avatar_url": null, "objective": "O1C",
+    { "id": "rachana",   "name": "Rachana Rao",                       "github": null, "avatar_url": null, "objective": "O1A",
       "onboarding": { "github_invite": "pending",  "kaggle_linked": false, "drive_access": false } }
   ]
 }

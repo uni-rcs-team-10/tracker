@@ -1,0 +1,49 @@
+# Builds data/batches.json from data/batch_plan.json + data/runs/*.json and deploys the site.
+# Requires: Settings -> Pages -> Source = "GitHub Actions".
+# Optional secret GH_ADMIN_TOKEN (admin read on this repo) to sync GitHub invite status.
+name: Build data & deploy dashboard
+
+on:
+  push:
+    branches: [main]        # tracker heartbeats are committed with [skip ci]; start/done/failed trigger a deploy
+  schedule:
+    - cron: "*/15 * * * *"  # picks up heartbeat commits
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build dashboard data
+        run: python3 scripts/build_data.py
+        env:
+          REPO: ${{ github.repository }}
+          GH_ADMIN_TOKEN: ${{ secrets.GH_ADMIN_TOKEN }}
+      - name: Prepare site
+        run: |
+          mkdir -p _site
+          cp -r index.html css js _site/
+          mkdir -p _site/data
+          cp data/config.json data/members.json data/batches.json data/setup_tasks.json _site/data/
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4
